@@ -1,3 +1,3 @@
-# Chapter 2: Working with Text Data
+# 第二章：处理文本数据
 
-- [dataloader-intuition.ipynb](dataloader-intuition.ipynb) contains optional (bonus) code to explain the data loader more intuitively with simple numbers rather than text.
+- [dataloader-intuition.ipynb](dataloader-intuition.ipynb) 包含可选（加餐）代码，使用简单数字而非文本来更直观地解释数据加载器。

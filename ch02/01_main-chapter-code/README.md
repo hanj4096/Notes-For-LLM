@@ -1,9 +1,9 @@
-# Chapter 2: Working with Text Data
+# 第二章：处理文本数据
 
-### Main Chapter Code
+### 主要章节代码
 
-- [ch02.ipynb](ch02.ipynb) contains all the code as it appears in the chapter
+- [ch02.ipynb](ch02.ipynb) 包含本章中出现的所有代码
 
-### Optional Code
+### 可选代码
 
-- [dataloader.ipynb](dataloader.ipynb) is a minimal notebook with the main data loading pipeline implemented in this chapter
+- [dataloader.ipynb](dataloader.ipynb) 是一个最小化的notebook，包含本章实现的主要数据加载管道

@@ -1,29 +1,29 @@
-# Chapter 1: Understanding Large Language Models
+# 第一章：理解大语言模型
 
 
 &nbsp;
-## Main Chapter Code
+## 主要章节代码
 
-There is no code in this chapter.
+本章没有代码。
 
 
 &nbsp;
-## Bonus Materials
+## 额外材料
 
-In the video below, I share my personal approach to setting up a Python environment on my computer:
-
-<br>
-<br>
-
-[![Link to the video](https://img.youtube.com/vi/yAcWnfsZhzo/0.jpg)](https://www.youtube.com/watch?v=yAcWnfsZhzo)
+在下面的视频中，我分享了我个人在计算机上设置Python环境的方法：
 
 <br>
 <br>
 
-As an optional bonus, the following video tutorial provides an overview of the LLM development lifecycle covered in this book:
+[![视频链接](https://img.youtube.com/vi/yAcWnfsZhzo/0.jpg)](https://www.youtube.com/watch?v=yAcWnfsZhzo)
 
 <br>
 <br>
 
-[![Link to the video](https://img.youtube.com/vi/kPGTx4wcm_w/0.jpg)](https://www.youtube.com/watch?v=kPGTx4wcm_w)
+作为可选的额外内容，以下视频教程提供了本书涵盖的LLM开发生命周期概述：
+
+<br>
+<br>
+
+[![视频链接](https://img.youtube.com/vi/kPGTx4wcm_w/0.jpg)](https://www.youtube.com/watch?v=kPGTx4wcm_w)
 
