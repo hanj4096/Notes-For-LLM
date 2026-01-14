@@ -1,11 +1,11 @@
-# Additional Classification Finetuning Experiments
+# 额外的分类微调实验
 
-The table below adds experiments to answer additional questions about various design choices. The first row uses the same settings as the main chapter and is used as a reference.
-For example,
+下面的表格添加了实验来回答关于各种设计选择的额外问题。第一行使用与主章节相同的设置，用作参考。
+例如，
 
-- comparing rows 1 and 2 answers the question: "What is the performance difference when we train the last or first token?";
-- comparing rows 1 and 3 answers the question: "What is the performance difference when we train only the last layer instead of the last block?";
-- and so forth.
+- 比较第1行和第2行可以回答："当我们训练最后一个或第一个token时，性能差异是什么？"
+- 比较第1行和第3行可以回答："当我们只训练最后一层而不是最后一个块时，性能差异是什么？"
+- 以此类推。
 
 &nbsp;
 
@@ -33,9 +33,9 @@ For example,
 
 &nbsp;
 
-### Usage
+### 使用方法
 
-You can use the following code to reproduce the experiments:
+您可以使用以下代码重现实验：
 
 - Row 1: `python additional_experiments.py`
 - Row 2: `python additional_experiments.py --trainable_token_pos first`
@@ -57,21 +57,21 @@ You can use the following code to reproduce the experiments:
 - Row 18: `python additional_experiments.py --ignore_index 50256`
 - Row 19: `python additional_experiments.py --average_embeddings`
 
-I've kept the LLM and dataset small on purpose, so you can run the training on a regular laptop like a MacBook Air M3 in about 15 minutes (for the default setting) in case you don't have access to a GPU.
+我故意保持LLM和数据集较小，这样您可以在普通笔记本电脑（如MacBook Air M3）上运行训练，大约需要15分钟（默认设置），以防您无法访问GPU。
 
 &nbsp;
 
-### Interpretation
+### 结果解释
 
-1. **Training the Last vs. First Output Token Position (Row 1 vs. 2)**: Training the last output token position results in substantially better performance compared to the first. This improvement is expected due to the causal self-attention mask.
-2. **Training the Last Transformer Block vs. Last Layer (Row 1 vs. 3)**: Training the entire last transformer block is also results in substantially better results than training only the last layer.
-3. **Training the Last vs. Last Two Last Transformer Blocks (Row 1 vs. 4)**: Training the two last transformer blocks instead of only the last block results in a noticeable 3.33% accuracy boost.
-4. **Training Last Transformer Block vs All Layers (Row 1 vs. 5)**: Training all layers shows a modest improvement of ~2% over just training the last transformer block, but it requires almost three times longer in terms of training duration. Also, it does not perform as well as training only the last two out of 12 transformer blocks.
-5. **Using Larger Pretrained Models (Row 1 vs 6, and Row 1 vs. 7 and 8)**: Employing a 3x larger pretrained model leads to worse results. However, using a 5x larger model improves performance compared to the initial model, as was anticipated. Similarly, the 12x larger model improves the predictive performance even further. (The medium model was perhaps not well pretrained or the particular finetuning configuration works not as well for this model.)
-6. **Using a Model with Random Weights vs. Pretrained Weights (Row 1 and 5 vs. 10)**: Utilizing a model with random weights yields results that are only slightly worse (by 3% and 1.3%) compared to using pretrained weights.
-7. **Using LoRA (Low-Rank Adaptation) vs Training All Layers (Row 11 vs. 5, and row 12 vs. 9)**: Keeping the model frozen and adding trainable LoRA layers (see [Appendix E](../../appendix-E/01_main-chapter-code/appendix-E.ipynb) for details) is a viable alternative to training all model parameters and even improves the performance by 1% point (row 11 vs. 5). As it can be seen by the ~1% lower gap between the training and validation accuracy when using LoRA, this is likely due to less overfitting. Moreover, using LoRA is also more memory-efficient because fewer parameters have to be updated. When training the larger model (row 12 vs. 9), we can also see that LoRA trains much faster (5.79 min instead of 8.12 min).
-8. **Padding Input to Full Context Length vs. Longest Training Example (Row 1 vs. 13)**: Padding the input to the full supported context length results is significantly worse.
-9. **Padding vs no padding (Row 1 vs. 14 & 15, and 16)**: The `--no_padding` option disables the padding in the dataset, which requires training the model with a batch size of 1 since the inputs have variable lengths. This results in a better test accuracy but takes longer to train. In row 15, we additionally enable gradient accumulation with 8 steps to achieve the same batch size as in the other experiments, which helps reduce overfitting and slightly boost the test set accuracy. In row 16, padding is applied, but the token position is selected based on the last non-padding token. Row 16 should be mathematically similar to row 15, which uses gradient accumulation. However, due to some challenges with gradient accumulation in cases of unequal token counts, there may be small discrepancies (this is discussed in [this](https://unsloth.ai/blog/gradient) blog post).
-10. **Disabling the causal attention mask (Row 1 vs. 17)**: Disables the causal attention mask used in the multi-head attention module. This means all tokens can attend all other tokens. The model accuracy is slightly improved compared to the GPT model with causal mask.
-11. **Ignoring the padding indices in the loss and backpropagation (Row 1 vs. 18)**: Setting `--ignore_index 50256` excludes the `<|endoftext|>` padding tokens in the `cross_entropy` loss function in PyTorch. In this case, it does not have any effect because we replaced the output layers so that the token IDs are either 0 or 1 for the binary classification example. However, this setting is useful when instruction finetuning models in chapter 7.
-12. **Averaging the embeddings over all tokens (Row 1 vs. 19)**: Setting `--average_embeddings` will average the embeddings over all tokens. If this option is not used (the default), only the output embeddings at the chosen token position (specified by `--trainable_token_pos`) are considered; for example, the embeddings of the last token. Enabling `--average_embeddings` will mean-pool the embeddings of all tokens into the position chosen by `--trainable_token_pos` (the last token by default). As we can see, this improves the performance from 95.00% to 96.33% with only a minimal increase in run time (0.28 min to 0.32 min) and might be worthwhile considering in practice.
+1. **训练最后一个vs第一个输出token位置（第1行 vs 第2行）**：训练最后一个输出token位置相比第一个位置能获得显著更好的性能。由于因果自注意力掩码，这种改进是预期的。
+2. **训练最后一个Transformer块vs最后一层（第1行 vs 第3行）**：训练整个最后一个transformer块也比只训练最后一层获得显著更好的结果。
+3. **训练最后一个vs最后两个Transformer块（第1行 vs 第4行）**：训练最后两个transformer块而不是只训练最后一个块，准确率提升了3.33%。
+4. **训练最后一个Transformer块vs所有层（第1行 vs 第5行）**：训练所有层相比只训练最后一个transformer块显示出约2%的适度改进，但训练时间几乎增加了三倍。此外，它的表现不如只训练12个transformer块中的最后两个。
+5. **使用更大的预训练模型（第1行 vs 第6行，以及第1行 vs 第7行和第8行）**：使用3倍大的预训练模型导致更差的结果。然而，使用5倍大的模型相比初始模型改进了性能，正如预期的那样。同样，12倍大的模型进一步改进了预测性能。（中等模型可能预训练得不够好，或者特定的微调配置对这个模型不太适用。）
+6. **使用随机权重模型vs预训练权重（第1行和第5行 vs 第10行）**：使用随机权重的模型产生的结果仅略差（分别差3%和1.3%）相比使用预训练权重。
+7. **使用LoRA（低秩适应）vs训练所有层（第11行 vs 第5行，以及第12行 vs 第9行）**：保持模型冻结并添加可训练的LoRA层（详见[附录E](../../appendix-E/01_main-chapter-code/appendix-E.ipynb)）是训练所有模型参数的可行替代方案，甚至将性能提升了1个百分点（第11行 vs 第5行）。从使用LoRA时训练和验证准确率之间约1%的较小差距可以看出，这可能是由于过拟合减少。此外，使用LoRA也更节省内存，因为需要更新的参数更少。在训练更大的模型时（第12行 vs 第9行），我们也可以看到LoRA训练速度更快（5.79分钟而不是8.12分钟）。
+8. **将输入填充到完整上下文长度vs最长训练样本（第1行 vs 第13行）**：将输入填充到完整支持的上下文长度会导致结果显著更差。
+9. **填充vs不填充（第1行 vs 第14行和第15行，以及第16行）**：`--no_padding`选项禁用数据集中的填充，这需要以批次大小为1训练模型，因为输入具有可变长度。这导致更好的测试准确率，但训练时间更长。在第15行中，我们额外启用了8步的梯度累积，以实现与其他实验相同的批次大小，这有助于减少过拟合并略微提升测试集准确率。在第16行中，应用了填充，但token位置是根据最后一个非填充token选择的。第16行在数学上应该与使用梯度累积的第15行相似。然而，由于在token数量不相等的情况下梯度累积存在一些挑战，可能会有小的差异（这在[这篇](https://unsloth.ai/blog/gradient)博客文章中讨论）。
+10. **禁用因果注意力掩码（第1行 vs 第17行）**：禁用多头注意力模块中使用的因果注意力掩码。这意味着所有token都可以关注所有其他token。与使用因果掩码的GPT模型相比，模型准确率略有提升。
+11. **在损失和反向传播中忽略填充索引（第1行 vs 第18行）**：设置`--ignore_index 50256`会在PyTorch的`cross_entropy`损失函数中排除`<|endoftext|>`填充token。在这种情况下，它没有任何效果，因为我们替换了输出层，使得token ID在二分类示例中要么是0要么是1。然而，这个设置在第七章中指令微调模型时很有用。
+12. **对所有token的嵌入进行平均（第1行 vs 第19行）**：设置`--average_embeddings`将对所有token的嵌入进行平均。如果不使用此选项（默认），只考虑所选token位置（由`--trainable_token_pos`指定）的输出嵌入；例如，最后一个token的嵌入。启用`--average_embeddings`将对所有token的嵌入进行平均池化，放入由`--trainable_token_pos`选择的位置（默认为最后一个token）。正如我们所看到的，这使性能从95.00%提升到96.33%，运行时间仅略微增加（从0.28分钟到0.32分钟），在实践中可能值得考虑。

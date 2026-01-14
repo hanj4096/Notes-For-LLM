@@ -194,6 +194,15 @@ class GPTModel(nn.Module):
         self.pos_emb = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
         self.drop_emb = nn.Dropout(cfg["drop_rate"])
 
+        # 创建transformer块序列：这是GPT模型的核心，包含多层transformer块
+        # nn.Sequential: 按顺序执行多个模块的容器，数据会依次通过每个块
+        #   *[...] 语法：解包列表，将多个TransformerBlock传递给Sequential
+        #   TransformerBlock(cfg): 创建transformer块，包含注意力机制和前馈网络
+        #   range(cfg["n_layers"]): 创建n_layers个transformer块
+        #     cfg["n_layers"]: transformer块的数量，例如12（GPT-2 small有12层）
+        # 整体结构：输入 -> Block1 -> Block2 -> ... -> BlockN -> 输出
+        # 每个transformer块都会对输入进行注意力计算和非线性变换
+        # 输出形状: [batch_size, num_tokens, emb_dim]，与输入形状相同
         self.trf_blocks = nn.Sequential(
             *[TransformerBlock(cfg) for _ in range(cfg["n_layers"])])
 

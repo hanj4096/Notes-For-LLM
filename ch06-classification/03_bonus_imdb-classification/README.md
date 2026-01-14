@@ -1,8 +1,8 @@
-# Additional Experiments Classifying the Sentiment of 50k IMDb Movie Reviews
+# 对50k IMDb电影评论进行情感分类的额外实验
 
-## Overview
+## 概述
 
-This folder contains additional experiments to compare the (decoder-style) GPT-2 (2018) model from chapter 6 to encoder-style LLMs like [BERT (2018)](https://arxiv.org/abs/1810.04805), [RoBERTa (2019)](https://arxiv.org/abs/1907.11692), and [ModernBERT (2024)](https://arxiv.org/abs/2412.13663). Instead of using the small SPAM dataset from Chapter 6, we are using the 50k movie review dataset from IMDb ([dataset source](https://ai.stanford.edu/~amaas/data/sentiment/)) with a binary classification objective, predicting whether a reviewer liked the movie or not. This is a balanced dataset, so a random prediction should yield 50% accuracy.
+此文件夹包含额外的实验，用于比较第6章中的（解码器风格）GPT-2 (2018)模型与编码器风格的LLM，如[BERT (2018)](https://arxiv.org/abs/1810.04805)、[RoBERTa (2019)](https://arxiv.org/abs/1907.11692)和[ModernBERT (2024)](https://arxiv.org/abs/2412.13663)。我们不再使用第6章中的小型SPAM数据集，而是使用来自IMDb的50k电影评论数据集（[数据集来源](https://ai.stanford.edu/~amaas/data/sentiment/)），目标是二分类，预测评论者是否喜欢这部电影。这是一个平衡的数据集，因此随机预测应该产生50%的准确率。
 
 
 
@@ -25,20 +25,20 @@ This folder contains additional experiments to compare the (decoder-style) GPT-2
 
 
 &nbsp;
-## Step 1: Install Dependencies
+## 步骤1：安装依赖
 
-Install the extra dependencies via
+通过以下命令安装额外的依赖：
 
 ```bash
 pip install -r requirements-extra.txt
 ```
 
 &nbsp;
-## Step 2: Download Dataset
+## 步骤2：下载数据集
 
-The codes are using the 50k movie reviews from IMDb ([dataset source](https://ai.stanford.edu/~amaas/data/sentiment/)) to predict whether a movie review is positive or negative.
+代码使用来自IMDb的50k电影评论（[数据集来源](https://ai.stanford.edu/~amaas/data/sentiment/)）来预测电影评论是正面还是负面。
 
-Run the following code to create the `train.csv`, `validation.csv`, and `test.csv` datasets:
+运行以下代码以创建`train.csv`、`validation.csv`和`test.csv`数据集：
 
 ```bash
 python download_prepare_dataset.py
@@ -46,12 +46,12 @@ python download_prepare_dataset.py
 
 
 &nbsp;
-## Step 3: Run Models
+## 步骤3：运行模型
 
 &nbsp;
-### 1) 124M GPT-2 Baseline
+### 1) 124M GPT-2 基线
 
-The 124M GPT-2 model used in chapter 6, starting with pretrained weights, and finetuning all weights:
+第6章中使用的124M GPT-2模型，从预训练权重开始，微调所有权重：
 
 ```bash
 python train_gpt.py --trainable_layers "all" --num_epochs 1
@@ -83,8 +83,7 @@ Test accuracy: 91.88%
 &nbsp;
 ### 2) 340M BERT
 
-
-A 340M parameter encoder-style [BERT](https://arxiv.org/abs/1810.04805) model:
+一个340M参数的编码器风格[BERT](https://arxiv.org/abs/1810.04805)模型：
 
 ```bash
 python train_bert_hf.py --trainable_layers "all" --num_epochs 1 --model "bert"
@@ -115,7 +114,7 @@ Test accuracy: 90.89%
 &nbsp;
 ### 3) 66M DistilBERT
 
-A 66M parameter encoder-style [DistilBERT](https://arxiv.org/abs/1910.01108) model (distilled down from a 340M parameter BERT model), starting for the pretrained weights and only training the last transformer block plus output layers:
+一个66M参数的编码器风格[DistilBERT](https://arxiv.org/abs/1910.01108)模型（从340M参数的BERT模型蒸馏而来），从预训练权重开始，只训练最后一个transformer块和输出层：
 
 
 
@@ -147,7 +146,7 @@ Test accuracy: 91.40%
 &nbsp;
 ### 4) 355M RoBERTa
 
-A 355M parameter encoder-style [RoBERTa](https://arxiv.org/abs/1907.11692) model, starting for the pretrained weights and only training the last transformer block plus output layers:
+一个355M参数的编码器风格[RoBERTa](https://arxiv.org/abs/1907.11692)模型，从预训练权重开始，只训练最后一个transformer块和输出层：
 
 
 ```bash
@@ -179,7 +178,7 @@ Test accuracy: 94.69%
 &nbsp;
 ### 5) 304M DeBERTa-v3
 
-A 304M parameter encoder-style [DeBERTa-v3](https://arxiv.org/abs/2111.09543) model. DeBERTa-v3 improves upon earlier versions with disentangled attention and improved position encoding.
+一个304M参数的编码器风格[DeBERTa-v3](https://arxiv.org/abs/2111.09543)模型。DeBERTa-v3通过解耦注意力和改进的位置编码改进了早期版本。
 
 
 ```bash
@@ -213,7 +212,7 @@ Test accuracy: 92.95%
 &nbsp;
 ### 6) 149M ModernBERT Base
 
-[ModernBERT (2024)](https://arxiv.org/abs/2412.13663) is an optimized reimplementation of BERT that incorporates architectural improvements like parallel residual connections and gated linear units (GLUs) to boost efficiency and performance. It maintains BERT’s original pretraining objectives while achieving faster inference and better scalability on modern hardware.
+[ModernBERT (2024)](https://arxiv.org/abs/2412.13663)是BERT的优化重新实现，它结合了架构改进，如并行残差连接和门控线性单元（GLU），以提高效率和性能。它保持了BERT的原始预训练目标，同时在现代硬件上实现了更快的推理和更好的可扩展性。
 
 ```bash
 python train_bert_hf.py --trainable_layers "all" --num_epochs 1 --model "modernbert-base"
@@ -247,7 +246,7 @@ Test accuracy: 93.79%
 &nbsp;
 ### 7) 395M ModernBERT Large
 
-Same as above but using the larger ModernBERT variant.
+与上面相同，但使用更大的ModernBERT变体。
 
 ```bash
 python train_bert_hf.py --trainable_layers "all" --num_epochs 1 --model "modernbert-large"
@@ -282,9 +281,9 @@ Test accuracy: 95.07%
 <br>
 
 &nbsp;
-### 8) Logistic Regression Baseline
+### 8) 逻辑回归基线
 
-A scikit-learn [logistic regression](https://sebastianraschka.com/blog/2022/losses-learned-part1.html) classifier as a baseline:
+一个scikit-learn[逻辑回归](https://sebastianraschka.com/blog/2022/losses-learned-part1.html)分类器作为基线：
 
 
 ```bash
